@@ -1,66 +1,63 @@
-import altair as alt
-import pandas as pd
 import streamlit as st
+import os
+from openai import OpenAI
+import base64
 
-# Show the page title and description.
-st.set_page_config(page_title="Movies dataset", page_icon="🎬")
-st.title("🎬 Movies dataset")
-st.write(
-    """
-    This app visualizes data from [The Movie Database (TMDB)](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).
-    It shows which movie genre performed best at the box office over the years. Just 
-    click on the widgets below to explore!
-    """
-)
+# Fonction pour encoder le fichier en base64
+def encode_file(file):
+    return base64.b64encode(file.getvalue()).decode()
 
+# Initialisation de l'application Streamlit
+st.title("Comparaison de Facture et Certificat")
 
-# Load the data from a CSV. We're caching this so it doesn't reload every time the app
-# reruns (e.g. if the user interacts with the widgets).
-@st.cache_data
-def load_data():
-    df = pd.read_csv("data/movies_genres_summary.csv")
-    return df
+# Champs pour télécharger les fichiers
+facture_file = st.file_uploader("Télécharger la facture (PDF)", type="pdf")
+certificat_file = st.file_uploader("Télécharger le certificat (PDF)", type="pdf")
 
+# Bouton pour lancer l'analyse
+if st.button("Analyser les documents"):
+    if facture_file and certificat_file:
+        # Encodage des fichiers en base64
+        facture_base64 = encode_file(facture_file)
+        certificat_base64 = encode_file(certificat_file)
 
-df = load_data()
+        # Initialisation du client OpenAI
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-# Show a multiselect widget with the genres using `st.multiselect`.
-genres = st.multiselect(
-    "Genres",
-    df.genre.unique(),
-    ["Action", "Adventure", "Biography", "Comedy", "Drama", "Horror"],
-)
+        # Création de la requête
+        response = client.chat.completions.create(
+            model="gpt-4-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Compare les deux documents. Dis-moi si les informations de l'émetteur de la facture correspondent aux informations contenues dans le certificat. Vérifie aussi que la période de validité du certificat couvre les dates de la facture, c'est-à-dire de la date d'enlèvement à la date d'échéance de la facture.",
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:application/pdf;base64,{facture_base64}",
+                            },
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:application/pdf;base64,{certificat_base64}",
+                            },
+                        },
+                    ],
+                }
+            ],
+            max_tokens=500,
+        )
 
-# Show a slider widget with the years using `st.slider`.
-years = st.slider("Years", 1986, 2006, (2000, 2016))
+        # Affichage du résultat
+        st.write("Résultat de l'analyse:")
+        st.write(response.choices[0].message.content)
+    else:
+        st.error("Veuillez télécharger les deux fichiers avant de lancer l'analyse.")
 
-# Filter the dataframe based on the widget input and reshape it.
-df_filtered = df[(df["genre"].isin(genres)) & (df["year"].between(years[0], years[1]))]
-df_reshaped = df_filtered.pivot_table(
-    index="year", columns="genre", values="gross", aggfunc="sum", fill_value=0
-)
-df_reshaped = df_reshaped.sort_values(by="year", ascending=False)
-
-
-# Display the data as a table using `st.dataframe`.
-st.dataframe(
-    df_reshaped,
-    use_container_width=True,
-    column_config={"year": st.column_config.TextColumn("Year")},
-)
-
-# Display the data as an Altair chart using `st.altair_chart`.
-df_chart = pd.melt(
-    df_reshaped.reset_index(), id_vars="year", var_name="genre", value_name="gross"
-)
-chart = (
-    alt.Chart(df_chart)
-    .mark_line()
-    .encode(
-        x=alt.X("year:N", title="Year"),
-        y=alt.Y("gross:Q", title="Gross earnings ($)"),
-        color="genre:N",
-    )
-    .properties(height=320)
-)
-st.altair_chart(chart, use_container_width=True)
+# Message d'information pour la clé API
+st.info("Assurez-vous d'avoir défini la variable d'environnement OPENAI_API_KEY avec votre clé API OpenAI avant d'exécuter cette application.")
