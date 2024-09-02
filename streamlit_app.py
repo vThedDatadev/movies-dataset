@@ -2,40 +2,43 @@ import streamlit as st
 import os
 from openai import OpenAI
 import base64
+from pdf2image import convert_from_bytes
+from io import BytesIO
+from PIL import Image
 
-# Fonction pour encoder le fichier en base64
-def encode_file(file):
-    return base64.b64encode(file.getvalue()).decode()
+def convert_pdf_to_images(pdf_file):
+    images = convert_from_bytes(pdf_file.getvalue())
+    return images
 
-# Initialisation de l'application Streamlit
+def encode_image(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
 st.title("Comparaison de Facture et Certificat")
 
-# Champ pour saisir la clé API
 api_key = st.text_input("Entrez votre clé API OpenAI", type="password")
 
-# Vérification de la clé API
 if not api_key:
     st.warning("Veuillez entrer votre clé API OpenAI pour continuer.")
     st.stop()
 
-# Champs pour télécharger les fichiers
 facture_file = st.file_uploader("Télécharger la facture (PDF)", type="pdf")
 certificat_file = st.file_uploader("Télécharger le certificat (PDF)", type="pdf")
 
-# Bouton pour lancer l'analyse
 if st.button("Analyser les documents"):
     if facture_file and certificat_file:
-        # Encodage des fichiers en base64
-        facture_base64 = encode_file(facture_file)
-        certificat_base64 = encode_file(certificat_file)
-
         try:
-            # Initialisation du client OpenAI avec la clé API fournie
+            facture_images = convert_pdf_to_images(facture_file)
+            certificat_images = convert_pdf_to_images(certificat_file)
+
+            facture_image_base64 = encode_image(facture_images[0])
+            certificat_image_base64 = encode_image(certificat_images[0])
+
             client = OpenAI(api_key=api_key)
 
-            # Création de la requête
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4-vision-preview",
                 messages=[
                     {
                         "role": "user",
@@ -47,22 +50,21 @@ if st.button("Analyser les documents"):
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                    "url": f"data:application/pdf;base64,{facture_base64}",
+                                    "url": f"data:image/png;base64,{facture_image_base64}",
                                 },
                             },
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                    "url": f"data:application/pdf;base64,{certificat_base64}",
+                                    "url": f"data:image/png;base64,{certificat_image_base64}",
                                 },
                             },
                         ],
                     }
                 ],
-                max_tokens=5000,
+                max_tokens=500,
             )
 
-            # Affichage du résultat
             st.write("Résultat de l'analyse:")
             st.write(response.choices[0].message.content)
         except Exception as e:
@@ -70,5 +72,4 @@ if st.button("Analyser les documents"):
     else:
         st.error("Veuillez télécharger les deux fichiers avant de lancer l'analyse.")
 
-# Message de confidentialité
 st.info("Note : Votre clé API est traitée de manière sécurisée et n'est pas stockée après la fermeture de l'application.")
