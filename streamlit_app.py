@@ -59,7 +59,7 @@ if st.button("Analyser les documents"):
                         ],
                     }
                 ],
-                max_tokens=500,
+                max_tokens=5000,
             )
 
             # Affichage du résultat
