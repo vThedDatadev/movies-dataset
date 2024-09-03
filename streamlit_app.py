@@ -3,11 +3,6 @@ import os
 from openai import OpenAI
 import base64
 from pdf2image import convert_from_bytes
-from io import BytesIOimport streamlit as st
-import os
-from openai import OpenAI
-import base64
-from pdf2image import convert_from_bytes
 from io import BytesIO
 from PIL import Image
 
