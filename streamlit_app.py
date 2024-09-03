@@ -45,7 +45,7 @@ if st.button("Analyser les documents"):
                         "content": [
                             {
                                 "type": "text",
-                                "text": "Compare les deux documents. Dis-moi si les informations de l'émetteur de la facture correspondent aux informations contenues dans le certificat. Vérifie aussi que la période de validité du certificat couvre les dates de la facture, c'est-à-dire de la date d'enlèvement jusqu'à la date d'échéance de la facture. Pour finir analyse la correspondance des descriptions produits de la facture avec la section 'II.1 Répertoire des produits' du certificat: Si pour une description produit de la facture il n'y a pas de correspondance dans le certificat, indique l'EAN concerné ",
+                                "text": "Dis-moi si les informations de l'émetteur de la facture correspondent aux informations contenues dans le certificat. Vérifie que la période de validité du certificat couvre les dates de la facture, c'est-à-dire de la date d'enlèvement jusqu'à la date d'échéance de la facture. Pour finir analyse la correspondance des descriptions produits de la facture avec la section 'II.1 Répertoire des produits' du certificat. Exemple: sur la facture 'CREME BRULEE 130G BBC' correspond à 'Yaourts et desserts: Crème brûlée' dans le certificat. Si tu ne trouves pas de correspondance pour un produit il faut retourner l'EAN concerné.",
                             },
                             {
                                 "type": "image_url",
