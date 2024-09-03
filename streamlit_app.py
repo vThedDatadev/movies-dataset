@@ -45,7 +45,7 @@ if st.button("Analyser les documents"):
                         "content": [
                             {
                                 "type": "text",
-                                "text": "Compare les deux documents. Dis-moi si les informations de l'émetteur de la facture correspondent aux informations contenues dans le certificat. Vérifie aussi que la période de validité du certificat couvre les dates de la facture, c'est-à-dire de la date d'enlèvement à la date d'échéance de la facture.",
+                                "text": "Compare les deux documents. Dis-moi si les informations de l'émetteur de la facture correspondent aux informations contenues dans le certificat. Vérifie aussi que la période de validité du certificat couvre les dates de la facture, c'est-à-dire de la date d'enlèvement à la date d'échéance de la facture. Pour finir vérifie que les descriptions produits associées à l'EAN trouvent une correspondnce dans la section répertoire des produits du certificat. Si ce n'est pas le cas déclare les documents non recevables",
                             },
                             {
                                 "type": "image_url",
