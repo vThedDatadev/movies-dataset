@@ -61,7 +61,7 @@ if st.button("Analyser les documents"):
                                 "1. La correspondance des informations de l'émetteur entre la facture et le certificat.\n"
                                 "2. La vérification que la période de validité du certificat couvre les dates de la facture (de la date d'enlèvement à la date d'échéance).\n"
                                 "3. La correspondance des descriptions de produits de la facture avec la section 'II.1 Répertoire des produits' du certificat. Exemple: sur la facture 'CREME BRULEE 130G BBC' correspond à 'Yaourts et desserts: Crème brûlée' dans le certificat mais soyez rigoureux car  'ALSA PREPA POUR MOELL CIT 435G C7' ne correspond pas du tout à 'Desserts végétaux : Préparation en poudre pour clafoutis BIO ALSA (FOODSO)' . Si tu ne trouves pas de correspondance pour un produit il faut retourner l'EAN concerné.\n"
-                                "4. Pour tout produit sans correspondance, listez l'EAN concerné sous forme de tableau.\n\n"
+                                "4. Pour tout produit sans correspondance, listez l'EAN concerné sous forme de tableau sans rien omettre.\n\n"
                                 "Présentez les résultats de manière structurée et facile à lire. Assurez-vous d'examiner toutes les pages des documents."
                     }
                 ]
