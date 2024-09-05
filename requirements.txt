@@ -7,4 +7,3 @@ google-api-python-client
 pdf2image 
 Pillow
 OpenAI
-python-poppler
