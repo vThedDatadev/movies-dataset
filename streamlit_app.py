@@ -7,7 +7,7 @@ from io import BytesIO
 from PIL import Image
 
 # Configuration de la page Streamlit (doit être la première commande Streamlit)
-st.set_page_config(page_title="Comparaison de Facture et Certificat", layout="wide")
+st.set_page_config(page_title="Comparaison de Facture et Certificats bio.", layout="wide")
 
 def convert_pdf_to_images(pdf_file):
     return convert_from_bytes(pdf_file.getvalue())
@@ -17,7 +17,7 @@ def encode_image(image):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-st.title("Comparaison de Facture et Certificat")
+st.title("Comparaison de Facture et Certificats bio")
 
 with st.sidebar:
     st.header("Paramètres")
