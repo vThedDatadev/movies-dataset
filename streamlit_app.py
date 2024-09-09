@@ -21,7 +21,7 @@ st.title("Comparaison de Facture et Certificats bio")
 
 with st.sidebar:
     st.header("Paramètres")
-    api_key = st.text_input("Entrez votre clé API OpenAI", type="password")
+    api_key = st.text_input("Entrez votre clé API", type="password")
     max_tokens = st.slider("Nombre maximum de tokens pour la réponse", 100, 2000, 1000)
 
 if not api_key:
